@@ -1,13 +1,27 @@
 const express = require('express');
 const app = express();
 
+const calculadoraIMC = require('./calculadoraIMC');
+
 app.get('/', (req, res) => {
     let peso = req.query.peso;
     let altura = req.query.altura;
 
-    let imc = peso / (altura * altura);
+    if (calculadoraIMC.validaParamentro(peso) == false || calculadoraIMC.validaParamentro(altura) == false) {
+        res.status(400).json({'Erro' : 'buxou tem que ser numero'})
+    }
 
-    res.json({imc: imc});
+    else {
+        let imc = calculadoraIMC.efetuarCalculoIMC(peso, altura);
+        let status = calculadoraIMC.retornarStatusIMC(imc);
+    
+        res.json({ imc: imc, status: status });
+    
+        //Você tambem pode utilizer desta maneira 
+        // let json = { imc: imc , status: status};
+        // res.json(json);
+    };
+
 });
 
 app.listen(8080, () => {
